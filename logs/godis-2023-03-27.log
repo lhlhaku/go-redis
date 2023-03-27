@@ -1,0 +1,17 @@
+[INFO][server.go:37] 2023/03/27 16:53:20 bind: 0.0.0.0:6379, start listening...
+[INFO][server.go:71] 2023/03/27 16:53:28 accept link
+[ERROR][handler.go:80] 2023/03/27 16:53:48 empty payload
+[ERROR][handler.go:80] 2023/03/27 16:53:48 empty payload
+[ERROR][handler.go:80] 2023/03/27 16:53:48 empty payload
+[INFO][server.go:51] 2023/03/27 16:54:42 shutting down...
+[INFO][handler.go:99] 2023/03/27 16:54:42 handler shutting down...
+[INFO][echo_database.go:27] 2023/03/27 16:54:42 EchoDatabase Close
+[INFO][echo_database.go:23] 2023/03/27 16:54:42 EchoDatabase AfterClientClose
+[INFO][handler.go:66] 2023/03/27 16:54:42 connection closed: 127.0.0.1:9916
+[INFO][handler.go:99] 2023/03/27 16:54:42 handler shutting down...
+[INFO][echo_database.go:27] 2023/03/27 16:54:42 EchoDatabase Close
+[INFO][server.go:37] 2023/03/27 16:54:47 bind: 0.0.0.0:6379, start listening...
+[INFO][server.go:71] 2023/03/27 16:54:47 accept link
+[INFO][echo_database.go:23] 2023/03/27 16:54:52 EchoDatabase AfterClientClose
+[INFO][handler.go:66] 2023/03/27 16:54:52 connection closed: 127.0.0.1:9924
+[INFO][server.go:71] 2023/03/27 16:54:55 accept link
