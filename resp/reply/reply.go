@@ -6,6 +6,14 @@ import (
 	"strconv"
 )
 
+/*
+BulkReply 正常字符串回复
+MultiBulkReply  多个字符串回复
+StatusReply  状态回复
+IntReply  回复整数
+ErrorReply回复错误
+*/
+
 var (
 	nullBulkReplyBytes = []byte("$-1")
 
@@ -53,7 +61,7 @@ func MakeMultiBulkReply(args [][]byte) *MultiBulkReply {
 // ToBytes marshal redis.Reply
 func (r *MultiBulkReply) ToBytes() []byte {
 	argLen := len(r.Args)
-	var buf bytes.Buffer
+	var buf bytes.Buffer //字符串拼接
 	buf.WriteString("*" + strconv.Itoa(argLen) + CRLF)
 	for _, arg := range r.Args {
 		if arg == nil {
