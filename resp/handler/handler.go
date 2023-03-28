@@ -6,6 +6,8 @@ package handler
 
 import (
 	"context"
+	"go-redis/cluster"
+	"go-redis/config"
 	"go-redis/database"
 	databaseface "go-redis/interface/database"
 	"go-redis/lib/logger"
@@ -31,14 +33,19 @@ type RespHandler struct {
 }
 
 // MakeHandler creates a RespHandler instance
-func MakeHandler() *RespHandler {
+func MakeHandler() *RespHandler { // 既可以单机又可以联机
 	var db databaseface.Database
-	db = database.NewDatabase()
+	if config.Properties.Self != "" &&
+		len(config.Properties.Peers) > 0 {
+		db = cluster.MakeClusterDatabase()
+	} else {
+		db = database.NewStandaloneDatabase()
+	}
+
 	return &RespHandler{
 		db: db,
 	}
 }
-
 func (h *RespHandler) closeClient(client *connection.Connection) { //关闭一个client链接
 	_ = client.Close()
 	h.db.AfterClientClose(client)

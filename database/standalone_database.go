@@ -12,15 +12,15 @@ import (
 	"strings"
 )
 
-// Database is a set of multiple database set
-type Database struct {
+// StandaloneDatabase is a set of multiple database set
+type StandaloneDatabase struct {
 	dbSet      []*DB
 	aofHandler *aof.AofHandler
 }
 
-// NewDatabase creates a redis database,
-func NewDatabase() *Database {
-	mdb := &Database{}
+// NewStandaloneDatabase creates a redis database,
+func NewStandaloneDatabase() *StandaloneDatabase {
+	mdb := &StandaloneDatabase{}
 	if config.Properties.Databases == 0 {
 		config.Properties.Databases = 16
 	}
@@ -51,7 +51,7 @@ func NewDatabase() *Database {
 // Exec executes command
 // parameter `cmdLine` contains command and its arguments, for example: "set key value"
 // set k v         get k        select 2  等等很多命令 只有select 整个命令在此层做
-func (mdb *Database) Exec(c resp.Connection, cmdLine [][]byte) (result resp.Reply) { //用户选的db， 用户发的命令都交给connection里记录的Db去执行
+func (mdb *StandaloneDatabase) Exec(c resp.Connection, cmdLine [][]byte) (result resp.Reply) { //用户选的db， 用户发的命令都交给connection里记录的Db去执行
 	defer func() { //防止整个协程都崩溃
 		if err := recover(); err != nil {
 			logger.Warn(fmt.Sprintf("error occurs: %v\n%s", err, string(debug.Stack())))
@@ -76,15 +76,15 @@ func (mdb *Database) Exec(c resp.Connection, cmdLine [][]byte) (result resp.Repl
 }
 
 // Close graceful shutdown database
-func (mdb *Database) Close() { // 没有什么特殊的逻辑
+func (mdb *StandaloneDatabase) Close() { // 没有什么特殊的逻辑
 
 }
 
-func (mdb *Database) AfterClientClose(c resp.Connection) { // 没有什么特殊的逻辑
+func (mdb *StandaloneDatabase) AfterClientClose(c resp.Connection) { // 没有什么特殊的逻辑
 }
 
 // select 2
-func execSelect(c resp.Connection, mdb *Database, args [][]byte) resp.Reply { //用户切换db的逻辑  用户要选到该db   // 用户connection 里记录者此时用到的库
+func execSelect(c resp.Connection, mdb *StandaloneDatabase, args [][]byte) resp.Reply { //用户切换db的逻辑  用户要选到该db   // 用户connection 里记录者此时用到的库
 	dbIndex, err := strconv.Atoi(string(args[0]))
 	if err != nil {
 		return reply.MakeErrReply("ERR invalid DB index")
