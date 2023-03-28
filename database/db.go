@@ -15,7 +15,8 @@ import (
 type DB struct {
 	index int
 	// key -> DataEntity
-	data dict.Dict
+	data   dict.Dict
+	addAof func(CmdLine)
 }
 
 // ExecFunc is interface for command executor
@@ -28,7 +29,8 @@ type CmdLine = [][]byte
 // makeDB create DB instance
 func makeDB() *DB {
 	db := &DB{
-		data: dict.MakeSyncDict(),
+		data:   dict.MakeSyncDict(),
+		addAof: func(line CmdLine) {}, //这里为什么要空实现呢？因为aof初始化时会执行命令，这些命令是不需要记录的
 	}
 	return db
 }

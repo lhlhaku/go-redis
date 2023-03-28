@@ -2,6 +2,7 @@ package database
 
 import (
 	"go-redis/interface/resp"
+	"go-redis/lib/utils"
 	"go-redis/lib/wildcard"
 	"go-redis/resp/reply"
 )
@@ -20,8 +21,10 @@ func execDel(db *DB, args [][]byte) resp.Reply {
 	for i, v := range args {
 		keys[i] = string(v)
 	}
-
 	deleted := db.Removes(keys...)
+	if deleted > 0 {
+		db.addAof(utils.ToCmdLine2("del", args...))
+	}
 	return reply.MakeIntReply(int64(deleted))
 }
 
@@ -41,6 +44,7 @@ func execExists(db *DB, args [][]byte) resp.Reply {
 // execFlushDB removes all data in current db
 func execFlushDB(db *DB, args [][]byte) resp.Reply {
 	db.Flush()
+	db.addAof(utils.ToCmdLine2("flushdb", args...))
 	return &reply.OkReply{}
 }
 
@@ -54,8 +58,15 @@ func execType(db *DB, args [][]byte) resp.Reply {
 	switch entity.Data.(type) {
 	case []byte:
 		return reply.MakeStatusReply("string")
+		//case *list.LinkedList:
+		//    return reply.MakeStatusReply("list")
+		//case dict.Dict:
+		//    return reply.MakeStatusReply("hash")
+		//case *set.Set:
+		//    return reply.MakeStatusReply("set")
+		//case *sortedset.SortedSet:
+		//    return reply.MakeStatusReply("zset")
 	}
-	//TODO
 	return &reply.UnknownErrReply{}
 }
 
@@ -73,6 +84,7 @@ func execRename(db *DB, args [][]byte) resp.Reply {
 	}
 	db.PutEntity(dest, entity)
 	db.Remove(src)
+	db.addAof(utils.ToCmdLine2("rename", args...))
 	return &reply.OkReply{}
 }
 
@@ -92,6 +104,7 @@ func execRenameNx(db *DB, args [][]byte) resp.Reply {
 	}
 	db.Removes(src, dest) // clean src and dest with their ttl
 	db.PutEntity(dest, entity)
+	db.addAof(utils.ToCmdLine2("renamenx", args...))
 	return reply.MakeIntReply(1)
 }
 
